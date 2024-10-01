@@ -2,6 +2,7 @@ import os
 import sys
 import pygame as pg
 import random
+import time
 
 WIDTH, HEIGHT = 1100, 650
 DELTA = {
@@ -24,6 +25,30 @@ def check_bound(obj_rct: pg.Rect)  -> tuple[bool,bool] :
     if obj_rct.top  < 0 or HEIGHT < obj_rct.bottom:
         tate = False
     return yoko, tate
+
+
+
+
+def gameover(screen:  pg.display):
+    cry_kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 5)
+    b_rect=pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(b_rect,(0,0,0),(0,0,WIDTH,HEIGHT))  #GAMEOVER時のブラックアウトを作成
+    b_rect.set_alpha(200)
+    font = pg.font.Font(None, 150)  #フォント取得
+    txt = font.render(f"GAME OVER", True, (255, 0, 0))  #文字作成
+    screen.blit(b_rect,[0,0])
+    screen.blit(txt, [400, 300]) #作成した文字をscreenに貼り付ける
+    screen.blit(cry_kk_img, [100, 200])
+    pg.display.update()
+    time.sleep(5)
+
+
+
+def timer():
+    font = pg.font.Font(None, 80)  #フォント取得
+    timer = font.render(f"time", True, (255, 255, 255))
+    screen.blit(timer, [0, 0])
+
 
 
 
@@ -51,11 +76,14 @@ def main():
         screen.blit(bg_img, [0, 0]) 
 
         if kk_rct.colliderect(bomb_rct):  #コウカトンと爆弾が重なっていたら
-            return 
+            gameover(screen)
+            return
+            
         
-        
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
+
         # if key_lst[pg.K_UP]:
         #     sum_mv[1] -= 5
         # if key_lst[pg.K_DOWN]:
@@ -64,6 +92,7 @@ def main():
         #     sum_mv[0] -= 5
         # if key_lst[pg.K_RIGHT]:
         #     sum_mv[0] += 5
+
         for key,tpl in DELTA.items():
             if key_lst[key]:
                 sum_mv[1] +=tpl[1]
@@ -84,6 +113,7 @@ def main():
         pg.display.update()
         tmr += 1
         clock.tick(50)
+
 
 
 if __name__ == "__main__":
