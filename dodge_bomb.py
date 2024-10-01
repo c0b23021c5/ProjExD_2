@@ -30,29 +30,40 @@ def check_bound(obj_rct: pg.Rect)  -> tuple[bool,bool] :
 
 
 def gameover(screen:  pg.display):
+
+    """
+    gameover画面を作成し、コウカトンと爆弾が接触したら表示する関数
+    """
+
     cry_kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 5)
-    b_rect=pg.Surface((WIDTH, HEIGHT))
+    b_rect=pg.Surface((WIDTH, HEIGHT))  #b_rect作成
     pg.draw.rect(b_rect,(0,0,0),(0,0,WIDTH,HEIGHT))  #GAMEOVER時のブラックアウトを作成
-    b_rect.set_alpha(200)
+    b_rect.set_alpha(200)  #透過設定
     font = pg.font.Font(None, 150)  #フォント取得
     txt = font.render(f"GAME OVER", True, (255, 0, 0))  #文字作成
-    screen.blit(b_rect,[0,0])
+    screen.blit(b_rect,[0,0])  #作成したb_rectをscreenに貼り付ける
     screen.blit(txt, [400, 300]) #作成した文字をscreenに貼り付ける
-    screen.blit(cry_kk_img, [100, 200])
+    screen.blit(cry_kk_img, [100, 200])  #泣いているコウカトンをscreenに貼り付ける
     pg.display.update()
     time.sleep(5)
 
 
 
-def timer():
+def timer(screen: pg.display,timer:  time):
+
+    """
+    ゲームの進行時間を計測し表示する関数
+    """
+
     font = pg.font.Font(None, 80)  #フォント取得
-    timer = font.render(f"time", True, (255, 255, 255))
-    screen.blit(timer, [0, 0])
+    timer = font.render(f"time={timer}", True, (255, 255, 255))  #時間を取得し文字に変換
+    screen.blit(timer, [0, 0])  #screenに貼り付ける
 
 
 
 
 def main():
+    
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg")    
@@ -69,6 +80,8 @@ def main():
     bomb_img.set_colorkey((0,0,0))
     clock = pg.time.Clock()
     tmr = 0
+
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -109,6 +122,8 @@ def main():
         if not tate :
             vy *= -1
         screen.blit(bomb_img, bomb_rct)
+
+        timer(screen,tmr)  #逃げ切っている時間表示
 
         pg.display.update()
         tmr += 1
