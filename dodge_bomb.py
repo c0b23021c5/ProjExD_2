@@ -49,29 +49,46 @@ def gameover(screen:  pg.display):
 
 
 
-def timer(screen: pg.display,timer:  time):
+def timer(screen: pg.display,timer):
 
     """
     ゲームの進行時間を計測し表示する関数
     """
 
     font = pg.font.Font(None, 80)  #フォント取得
-    timer = font.render(f"time={timer}", True, (255, 255, 255))  #時間を取得し文字に変換
+    timer = font.render(f"time={timer}", True, (0, 0, 0))  #時間を取得し文字に変換
     screen.blit(timer, [0, 0])  #screenに貼り付ける
 
-
+def kasoku()  ->tuple[list,list]:
+    """
+    timeが大きくなるにつれて爆弾の速度と大きさを大きくする関数
+    """
+    saccs = [a for a in range(1, 11)]
+    bomb_imgs=[]
+    for r in range(1, 11): 
+        bomb_img = pg.Surface((20*r, 20*r))   #加速の計算
+        pg.draw.circle(bomb_img, (255, 0, 0), (10*r, 10*r), 10*r)  #拡大の計算
+        bomb_img.set_colorkey((0, 0, 0))
+        bomb_imgs.append(bomb_img)
+    return saccs,bomb_imgs
 
 
 def main():
-    
+
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
+    bomb_accs,bomb_imgs=kasoku()  #kasoku関数呼び出し
+
+
     bomb_img = pg.Surface((20,20))   #空のsurface
     pg.draw.circle(bomb_img,(255,0,0),(10,10),10)
+
+
     bomb_rct =  bomb_img.get_rect()  #爆弾rectの抽出
     bomb_rct.centerx = random.randint(0,WIDTH)
     bomb_rct.centery = random.randint(0,HEIGHT)
@@ -115,12 +132,18 @@ def main():
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         screen.blit(kk_img, kk_rct)
 
-        bomb_rct.move_ip(vx,vy)
+        avx = vx*bomb_accs[min(tmr//500, 9)]
+        avy = vy*bomb_accs[min(tmr//500, 9)]
+
+        bomb_rct.move_ip(avx,avy)
         yoko ,tate = check_bound(bomb_rct)
         if not yoko :
             vx *= -1
         if not tate :
             vy *= -1
+
+        bomb_img = bomb_imgs[min(tmr//500, 9)]
+
         screen.blit(bomb_img, bomb_rct)
 
         timer(screen,tmr)  #逃げ切っている時間表示
