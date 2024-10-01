@@ -132,8 +132,8 @@ def main():
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         screen.blit(kk_img, kk_rct)
 
-        avx = vx*bomb_accs[min(tmr//500, 9)]
-        avy = vy*bomb_accs[min(tmr//500, 9)]
+        avx = vx*bomb_accs[min(tmr//500, 9)]  #xの速度変換
+        avy = vy*bomb_accs[min(tmr//500, 9)]  #yの速度変換
 
         bomb_rct.move_ip(avx,avy)
         yoko ,tate = check_bound(bomb_rct)
@@ -142,7 +142,7 @@ def main():
         if not tate :
             vy *= -1
 
-        bomb_img = bomb_imgs[min(tmr//500, 9)]
+        bomb_img = bomb_imgs[min(tmr//500, 9)] #爆弾の大きさを変換
 
         screen.blit(bomb_img, bomb_rct)
 
